@@ -1,7 +1,7 @@
 #pragma once
 #include "../mvc/View.h"
 #include "../model/EditorModel.h"
-#include "gui.h"
+#include "window.h"
 #include "Menu.h"
 #include "Canvas.h"
 
@@ -24,7 +24,6 @@ namespace view {
         };
         void onModelChanged() override { update(); }
 
-        void handleInput(const gui::Event& event) { m_window->handleInput(event); }
         void selectItem(float x, float y) { m_canvas->selectItem(x, y); }
 
         gui::Window& getWindow() { return *m_window; }
@@ -43,7 +42,7 @@ namespace view {
             }
         }
 
-        std::unique_ptr <gui::Window> m_window;
+        std::unique_ptr<gui::Window> m_window;
         std::unique_ptr<view::Canvas> m_canvas;
     };
 }

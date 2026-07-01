@@ -1,0 +1,212 @@
+classDiagram
+direction TB
+    class Model {
+	    -observers: vector~weak_ptr~IModelObserver~~
+	    +attach(observer: weak_ptr~IModelObserver~)
+	    +notifyObservers()
+    }
+
+    class IModelObserver {
+	    +onModelChanged()
+    }
+
+    class View {
+	    #model: shared_ptr~Model~
+	    +render()
+	    +update()
+	    +onModelChanged()
+	    +close()
+	    +setModel(model: shared_ptr~Model~)
+    }
+
+    class IController {
+	    +onCreateNewDocument()
+	    +onImportDocument(filename: string)
+	    +onExportDocument(filename: string)
+	    +onCreateItem(type: string, x: float, y: float)
+	    +onDeleteItem(index: uint32_t)
+    }
+
+    class EditorModel {
+	    -document: shared_ptr~Document~
+	    +createNewDocument(name: string)
+	    +importDocument(filename: string) : bool
+	    +exportDocument(filename: string) : bool
+	    +createItem(type: ItemType, position: Point, size: Size)
+	    +deleteItem(index: size_t) : bool
+    }
+
+    class Document {
+	    -items: vector~shared_ptr~ItemData~~
+	    -modified: bool
+	    -name: string
+	    +addItem(item: shared_ptr~ItemData~)
+	    +removeItemById(id: size_t) : bool
+	    +serialize() : string
+	    +deserialize(data: string) : shared_ptr~Document~
+	    +getItems() : vector~shared_ptr~ItemData~~
+	    +isModified() : bool
+	    +getName() : string
+    }
+
+    class ItemData {
+	    -type: ItemType
+	    -position: Point
+	    -size: Size
+	    -color: string
+	    -id: uint32_t
+    }
+
+    class EditorView {
+	    -window: unique_ptr~gui::Window~
+	    -canvas: unique_ptr~view::Canvas~
+	    +render()
+	    +update()
+	    +onModelChanged()
+	    +close()
+	    -updateFromModel()
+    }
+
+    class Canvas {
+	    -items: vector~unique_ptr~ViewItem~~
+	    +render()
+	    +addItem(data: shared_ptr~model::ItemData~)
+	    +selectItem(x: float, y: float)
+	    +removeItem(id: size_t) : bool
+	    +selectItemAt(x: float, y: float) : shared_ptr~ViewItem~
+	    +getSelectedItemId() : uint32_t
+	    +getItems() : auto&
+	    +clear()
+	    -createViewItem(data: shared_ptr~model::ItemData~) : unique_ptr~ViewItem~
+    }
+
+    class ViewItem {
+	    #data: shared_ptr~model::ItemData~
+	    +draw()
+	    +containsPoint(x: float, y: float) : bool
+	    +update()
+	    +getData() : shared_ptr~model::ItemData~
+	    +getId() : uint32_t
+    }
+
+    class RectangleViewItem {
+	    +draw()
+	    +containsPoint(x: float, y: float) : bool
+    }
+
+    class CircleViewItem {
+	    +draw()
+	    +containsPoint(x: float, y: float) : bool
+    }
+
+    class Window {
+	    +isOpen() : bool
+	    +close()
+	    +handleInput(event: gui::Event)
+	    +poolEvent(event: gui::Event&) : bool
+	    +display()
+	    +clear()
+    }
+
+    class Event {
+	    -type: EventType
+	    -mouseButton: MouseButton
+	    -mousePosition: Point
+	    -keyCode: KeyCode
+    }
+
+    class Command {
+	    #model: shared_ptr~EditorModel~
+    }
+
+    class NewDocumentCommand {
+	    +execute()
+    }
+
+    class ImportDocumentCommand {
+	    -filename: string
+	    +execute()
+    }
+
+    class ExportDocumentCommand {
+	    -filename: string
+	    +execute()
+    }
+
+    class CreateItemCommand {
+	    -type: ItemType
+	    -position: Point
+	    -size: Size
+	    +execute()
+    }
+
+    class DeleteItemCommand {
+	    -itemId: uint32_t
+	    +execute()
+    }
+
+    class QuitCommand {
+	    -quitCallback: function
+	    +execute()
+    }
+
+    class Application {
+	    -model: shared_ptr~EditorModel~
+	    -view: shared_ptr~EditorView~
+	    -menu: shared_ptr~Menu~
+	    -running: bool
+	    +run()
+	    +shutdown()
+	    +onCreateNewDocument()
+	    +onImportDocument(filename: string)
+	    +onExportDocument(filename: string)
+	    +onCreateItem(type: string, x: float, y: float)
+	    +onDeleteItem(itemId: uint32_t)
+	    +onItemSelect(x: float, y: float)
+	    -setupMenu()
+	    -processEvents()
+	    -render()
+    }
+
+    class Menu {
+	    -items: vector~MenuItem~
+	    +addItem(label: string, action: function)
+	    +render()
+	    +handleClick(x: float, y: float) : bool
+    }
+
+    class MenuItem {
+	    +label: string
+	    +action: function~void() ~
+    }
+    
+	<<abstract>> Model
+	<<interface>> IModelObserver
+	<<abstract>> View
+	<<interface>> IController
+	<<abstract>> ViewItem
+	<<abstract>> Command
+
+    EditorModel --|> Model
+    EditorView --|> View
+    EditorView ..|> IModelObserver
+    Application ..|> IController
+    Application --> EditorModel : uses
+    Application --> EditorView : uses
+    Application --> Menu : uses
+    EditorModel --> Document : contains
+    Document --> ItemData : contains
+    EditorView --> Window : contains
+    EditorView --> Canvas : contains
+    Canvas --> ViewItem : contains
+    ViewItem <|-- RectangleViewItem
+    ViewItem <|-- CircleViewItem
+    ViewItem --> ItemData : references
+    Menu --> MenuItem : contains
+    Window --> Event : uses
+    NewDocumentCommand --|> Command
+    ImportDocumentCommand --|> Command
+    ExportDocumentCommand --|> Command
+    CreateItemCommand --|> Command
+    DeleteItemCommand --|> Command
+    Command --> EditorModel : uses

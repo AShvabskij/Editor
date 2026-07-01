@@ -35,10 +35,7 @@ namespace gui {
         Up,
         Down,
         Left,
-        Right,
-        A, B, C, D, E, F, G, H, I, J, K, L, M,
-        N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
-        Num0, Num1, Num2, Num3, Num4, Num5, Num6, Num7, Num8, Num9
+        Right
     };
 
     // Структура позиции
@@ -56,7 +53,6 @@ namespace gui {
 
         explicit Event(EventType type) : m_type(type) {}
 
-        // Геттеры
         EventType getType() const { return m_type; }
 
         // Для событий мыши
@@ -87,7 +83,6 @@ namespace gui {
 
         ~Window() = default;
 
-        // Основные методы
         bool isOpen() const { return m_isOpen; }
         void close() { m_isOpen = false; }
 
@@ -97,7 +92,7 @@ namespace gui {
         }
 
         // Получение событий
-        bool poolEvent(Event& event) {
+        bool popEvent(Event& event) {
             if (m_eventQueue.empty()) {
                 return false;
             }
@@ -106,29 +101,13 @@ namespace gui {
             return true;
         }
 
-        // Симуляция событий (для демонстрации)
-        void simulateEvent(const Event& event) {
-            m_eventQueue.push(event);
-        }
-
-        // Геттеры
         int getWidth() const { return m_width; }
         int getHeight() const { return m_height; }
 
-        // Отображение (для демонстрации)
         void display() {
-            // В реальном приложении здесь был бы рендеринг
-            // Сейчас просто выводим сообщение
-            static int frameCount = 0;
-            frameCount++;
-            if (frameCount % 10 == 0) {
-                // Не спамим, выводим каждые 10 кадров
-            }
         }
 
-        // Очистка окна
         void clear() {
-            // Очистка экрана в реальном приложении
         }
 
     private:

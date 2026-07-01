@@ -12,7 +12,7 @@ endif()
 project ("Editor")
 
 # Добавьте источник в исполняемый файл этого проекта.
-add_executable (Editor "main.cpp"  "mvc/Model.h" "mvc/View.h" "mvc/Controller.h" "model/ItemData.h" "model/Document.h" "model/EditorModel.h" "view/ViewItem.h" "view/Canvas.h" "view/Menu.h"  "view/EditorView.h" "view/gui.h")
+add_executable (Editor "main.cpp"  "mvc/Model.h" "mvc/View.h" "mvc/Controller.h" "model/ItemData.h" "model/Document.h" "model/EditorModel.h" "view/ViewItem.h" "view/Canvas.h" "view/Menu.h"  "view/EditorView.h" "view/window.h" "commands.h")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Editor PROPERTY CXX_STANDARD 20)

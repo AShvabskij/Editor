@@ -9,7 +9,7 @@ namespace view {
 
     class Canvas {
     public:
-        Canvas(int width, int height) = default;
+        Canvas(int width, int height) {};
         ~Canvas() = default;
 
         void render() {

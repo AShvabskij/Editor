@@ -53,19 +53,12 @@ namespace model {
             notifyObservers();
         }
 
-        bool deleteItem(size_t index) {
+        bool deleteItem(uint32_t id) {
             if (!m_document) return false;
 
-            bool result = m_document->removeItem(index);
+            bool result = m_document->removeItemById(id);
             if (result) notifyObservers();
             return result;
-        }
-
-        // Getters
-        std::shared_ptr<model::Document> getDocument() const { return m_document; }
-        const std::vector<std::shared_ptr<model::ItemData>>& getItems() const {
-            static std::vector<std::shared_ptr<model::ItemData>> empty;
-            return m_document ? m_document->getItems() : empty;
         }
 
     private:

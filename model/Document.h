@@ -17,15 +17,6 @@ namespace model {
             m_modified = true;
         }
 
-        bool removeItem(size_t index) {
-            if (index < m_items.size()) {
-                m_items.erase(m_items.begin() + index);
-                m_modified = true;
-                return true;
-            }
-            return false;
-        }
-
         bool removeItemById(size_t id) {
             auto it = std::find_if(m_items.begin(), m_items.end(),
                 [id](const auto& item) { return item->getId() == id; });
