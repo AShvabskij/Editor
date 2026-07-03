@@ -44,7 +44,8 @@ public:
 
     void onCreateNewDocument() override {
         std::cout << "Creating new document..." << std::endl;
-        m_model->createNewDocument();
+        NewDocumentCommand command(m_model);
+        command.execute();
         m_view->update();
     }
 
